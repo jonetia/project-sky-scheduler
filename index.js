@@ -58,10 +58,10 @@ async function callFunction(name) {
       // ingest-flyitalyadsb's writes were completing successfully server-side
       // ~40s after this timeout fired client-side -- no data was lost, but
       // the script was giving up and logging false failures too early.
-      signal: AbortSignal.timeout(150000),
+      signal: AbortSignal.timeout(240000),
     });
     const body = await res.text();
-    console.log(`[${name}] ${res.status} in ${Date.now() - startedAt}ms -- ${body.slice(0, 200)}`);
+    console.log(`[${name}] ${res.status} in ${Date.now() - startedAt}ms -- ${body.slice(0, 2000)}`);
   } catch (err) {
     console.error(`[${name}] failed after ${Date.now() - startedAt}ms:`, err.message);
   }
