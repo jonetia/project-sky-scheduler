@@ -54,7 +54,11 @@ async function callFunction(name) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
       },
-      signal: AbortSignal.timeout(60000),
+      // 2026-09-16: was 60000. Confirmed via real DB timestamps that
+      // ingest-flyitalyadsb's writes were completing successfully server-side
+      // ~40s after this timeout fired client-side -- no data was lost, but
+      // the script was giving up and logging false failures too early.
+      signal: AbortSignal.timeout(150000),
     });
     const body = await res.text();
     console.log(`[${name}] ${res.status} in ${Date.now() - startedAt}ms -- ${body.slice(0, 200)}`);
