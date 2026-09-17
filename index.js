@@ -40,7 +40,7 @@ if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
 // identical so behavior doesn't change, only which process triggers it.
 const JOBS = [
   { name: "ingest-flyitalyadsb", schedule: "2-59/5 * * * *" },
-  { name: "compact-aircraft-flights", schedule: "3-59/10 * * * *" },
+  { name: "compact-aircraft-flights", schedule: "8-59/10 * * * *" },
   { name: "resolve-flight-routes", schedule: "9-59/10 * * * *" },
   { name: "detect-go-arounds", schedule: "6-59/15 * * * *" },
 ];
