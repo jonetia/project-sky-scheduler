@@ -30,10 +30,18 @@ import cron from "node-cron";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// 2026-09-28: dedicated least-privilege job secret. Background-job edge functions
+// (resolve-flight-routes, ingest-flyitalyadsb) now require it as x-sky-job-key; the
+// value lives in Supabase Vault (sky_job_secret) and in this Railway variable only.
+// Optional here so the other jobs keep running if it is ever unset.
+const JOB_SECRET = process.env.SKY_JOB_SECRET;
 
 if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
   console.error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables.");
   process.exit(1);
+}
+if (!JOB_SECRET) {
+  console.warn("SKY_JOB_SECRET is not set: guarded jobs (resolve-flight-routes, ingest-flyitalyadsb) will be rejected with 401.");
 }
 
 // Same offsets already proven collision-free on pg_cron tonight -- kept
@@ -53,6 +61,7 @@ async function callFunction(name) {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
+        ...(JOB_SECRET ? { "x-sky-job-key": JOB_SECRET } : {}),
       },
       // 2026-09-16: was 60000. Confirmed via real DB timestamps that
       // ingest-flyitalyadsb's writes were completing successfully server-side

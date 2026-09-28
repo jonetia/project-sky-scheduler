@@ -32,7 +32,11 @@ npm start
 
 ## Deploying
 
-Set `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` as **Railway
+Set `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `SKY_JOB_SECRET` as **Railway
 environment variables** in the service dashboard -- not in any file in
 this repo. This repo is public; the service role key grants full,
 unrestricted database access and must never be committed.
+
+`SKY_JOB_SECRET` is the dedicated background-job secret (Supabase Vault `sky_job_secret`).
+It is sent as the `x-sky-job-key` header; `resolve-flight-routes` and `ingest-flyitalyadsb`
+reject calls without it. Never commit its value.
